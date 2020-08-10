@@ -44,6 +44,6 @@ $ docker exec -it <container_ID> bash -c "source /home/oracle/.bashrc; sqlplus /
 $ connect sys as sysdba;
 -- Here enter the password as 'oracle'
 $ alter session set "_ORACLE_SCRIPT"=true;
-$	create user admin identified by admin;
-$	GRANT ALL PRIVILEGES TO admin;
+$ create user admin identified by admin;
+$ GRANT ALL PRIVILEGES TO admin;
 ```
