@@ -47,3 +47,12 @@ $ alter session set "_ORACLE_SCRIPT"=true;
 $ create user admin identified by admin;
 $ GRANT ALL PRIVILEGES TO admin;
 ```
+
+## Endpoint 
+```
+# To consume the API
+http://localhost:3000/tasks
+
+# To see the API documentation
+http://localhost:3000/api
+```
