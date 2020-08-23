@@ -20,23 +20,6 @@ export class TaskService {
   }
 
   async create(task: Task): Promise<void> {
-    /*const object = this.taskRepository.create(task);
-    const queryRunner = this.connection.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await queryRunner.manager.save(object);
-
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      console.log(err);
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
-    }*/
-
     await getConnection()
       .createQueryBuilder()
       .insert()

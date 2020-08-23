@@ -6,6 +6,7 @@ import { TaskService } from './tasks/shared/task.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './tasks/entities/task.entity';
 import { TaskSchema } from './tasks/schemas/task.schema';
+import { SecurityModule } from './security/security.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TaskSchema } from './tasks/schemas/task.schema';
       logging: true,
     }),
     TasksModule,
+    SecurityModule,
   ],
   controllers: [TasksController],
   providers: [TaskService],
