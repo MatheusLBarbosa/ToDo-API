@@ -5,8 +5,10 @@ import { TaskService } from './tasks/shared/task.service';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './tasks/entities/task.entity';
-import { TaskSchema } from './tasks/schemas/task.schema';
 import { SecurityModule } from './security/security.module';
+import { SecurityService } from './security/shared/security.service';
+import { OTP } from './security/entities/otp.entity';
+import { Config } from './security/entities/config.entity';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { SecurityModule } from './security/security.module';
       password: 'admin',
       database: 'oracle-xe',
       sid: 'xe',
-      entities: [Task],
+      entities: [Task, OTP, Config],
       synchronize: true,
       dropSchema: false,
       logging: true,
@@ -27,6 +29,6 @@ import { SecurityModule } from './security/security.module';
     SecurityModule,
   ],
   controllers: [TasksController],
-  providers: [TaskService],
+  providers: [TaskService, SecurityService],
 })
 export class AppModule {}
