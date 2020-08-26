@@ -1,8 +1,8 @@
 import { EntitySchema } from 'typeorm';
 import { OTP } from '../entities/otp.entity';
 
-export const TaskSchema = new EntitySchema<OTP>({
-  name: 'TBSSO_ONETIMEPASSWORD',
+export const OTPSchema = new EntitySchema<OTP>({
+  name: 'otp',
   target: OTP,
   columns: {
     id: {
@@ -16,15 +16,6 @@ export const TaskSchema = new EntitySchema<OTP>({
     },
     auth_count: {
         type: Number
-    },
-    date_create: {
-        type: Date
-    },
-    date_expiration: {
-        type: Date
-    },
-    date_validation: {
-        type: Date
     }
   },
 });

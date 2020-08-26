@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
@@ -6,15 +11,15 @@ export class OTP {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column()
   @ApiProperty({ type: String, description: 'Código identificador do cliente' })
   cod_client: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @ApiProperty({ type: Number, description: 'Código OTP' })
   otp_pin: number;
 
-  @Column({ nullable: false })
+  @Column({ default: 0 })
   @ApiProperty({
     type: Number,
     description:
@@ -22,15 +27,19 @@ export class OTP {
   })
   auth_count: number;
 
-  @Column({ nullable: false })
+  @CreateDateColumn({
+    type: 'date',
+    nullable: true,
+    default: () => 'SYSTIMESTAMP'
+  })
   @ApiProperty({ type: Date, description: 'Data de criação do PIN do OTP' })
-  date_create: Date;
+  createdAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
   @ApiProperty({ type: Date, description: 'Data de expiração do PIN do OTP' })
-  date_expiration: Date;
+  expiredAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
   @ApiProperty({ type: Date, description: 'Data de validação do PIN do OTP' })
-  date_validation: Date;
+  validateAt: Date;
 }
