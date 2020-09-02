@@ -1,11 +1,11 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { OTP } from '../entities/otp.entity';
-import { getConnection, getRepository, Repository, getManager } from 'typeorm';
+import { getConnection, getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OtpResponse } from '../entities/otpResponse.entity';
-import { Config } from '../entities/config.entity';
 import { exception } from 'console';
 import { ValidateRequest } from '../entities/validateRequest.entity';
+import { ReturnCode } from '../entities/returnCode.enum';
 
 @Injectable()
 export class SecurityService {
@@ -49,14 +49,39 @@ export class SecurityService {
     }
   }
 
-  async validate(validateObj: ValidateRequest) {
+  async validate(validateObj: ValidateRequest): Promise<ReturnCode> {
     try {
       const codInfo = await this.checkCodExistence(validateObj.cod_client);
 
-      console.log(codInfo.createdAt.getSeconds());
+      if (validateObj.otp_pin !== codInfo.otp_pin && codInfo.auth_count <= 6) {
+        if (codInfo.auth_count === 6) return ReturnCode.COD_RET_DISP_BLOQUEADO;
+
+        codInfo.auth_count += 1;
+        this.updateAuthCount(codInfo);
+
+        return ReturnCode.COD_RET_PIN_INVALIDO;
+      }
+
+      if (codInfo.auth_count === 5) {
+        codInfo.auth_count += 1;
+        this.updateAuthCount(codInfo);
+
+        return ReturnCode.COD_RET_PENULTIMA_TENTATIVA;
+      }
+
+      return ReturnCode.COD_RET_OK;
     } catch (err) {
-      throw new exception('');
+      throw new InternalServerErrorException();
     }
+  }
+
+  private async updateAuthCount(otpObj: OTP) {
+    await getConnection()
+      .createQueryBuilder()
+      .update(OTP)
+      .set({ auth_count: otpObj.auth_count })
+      .where('id = :id', { id: otpObj.id })
+      .execute();
   }
 
   private async checkCodExistence(cod: string): Promise<OTP> {
