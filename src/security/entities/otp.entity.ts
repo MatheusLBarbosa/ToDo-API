@@ -2,7 +2,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
+  CreateDateColumn
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -28,14 +28,20 @@ export class OTP {
   auth_count: number;
 
   @CreateDateColumn({
-    type: 'date',
+    type: 'timestamp',
     nullable: true,
-    default: () => 'SYSTIMESTAMP'
+    default: () => "SYSTIMESTAMP",
+    update: true
   })
   @ApiProperty({ type: Date, description: 'Data de criação do PIN do OTP' })
   createdAt: Date;
 
-  @Column({ type: 'date', nullable: true })
+  @CreateDateColumn({
+    type: 'timestamp',
+    nullable: true,
+    default: () => "SYSTIMESTAMP+50/(24*60*60)",
+    update: true
+  })
   @ApiProperty({ type: Date, description: 'Data de expiração do PIN do OTP' })
   expiredAt: Date;
 

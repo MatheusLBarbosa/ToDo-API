@@ -3,7 +3,9 @@ import { OTP } from '../entities/otp.entity';
 import { getConnection, getRepository, Repository, getManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OtpResponse } from '../entities/otpResponse.entity';
-import { Console } from 'console';
+import { Config } from '../entities/config.entity';
+import { exception } from 'console';
+import { ValidateRequest } from '../entities/validateRequest.entity';
 
 @Injectable()
 export class SecurityService {
@@ -21,8 +23,6 @@ export class SecurityService {
       otpRes.cod_client = otp.cod_client;
       otpRes.otp_pin = pin;
 
-      console.log(codCheck);
-
       if (codCheck !== undefined) {
         await getConnection()
           .createQueryBuilder()
@@ -34,6 +34,7 @@ export class SecurityService {
         return this.otpRepos.create(otpRes);
       } else {
         otp.otp_pin = pin;
+
         await getConnection()
           .createQueryBuilder()
           .insert()
@@ -48,12 +49,15 @@ export class SecurityService {
     }
   }
 
-  /* async validate(cod: string, pin: number) {
+  async validate(validateObj: ValidateRequest) {
     try {
+      const codInfo = await this.checkCodExistence(validateObj.cod_client);
+
+      console.log(codInfo.createdAt.getSeconds());
     } catch (err) {
-      throw new InternalServerErrorException();
+      throw new exception('');
     }
-  }*/
+  }
 
   private async checkCodExistence(cod: string): Promise<OTP> {
     try {
@@ -70,10 +74,5 @@ export class SecurityService {
 
   private generatePin(): number {
     return Math.floor(100000 + Math.random() * 900000);
-  }
-
-  private async getCurrentDate(): Promise<Date> {
-    //DD-MON-RR HH.MI.SSXFF AM
-    return await getManager().query(`SELECT SYSDATE FROM DUAL`);
   }
 }

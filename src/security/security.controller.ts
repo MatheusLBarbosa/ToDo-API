@@ -4,6 +4,7 @@ import { ApiAcceptedResponse, ApiOkResponse, ApiBody, ApiResponse } from '@nestj
 import { OTP } from './entities/otp.entity';
 import { OtpResponse } from './entities/otpResponse.entity';
 import { OtpRequest } from './entities/otpRequest.entity';
+import { ValidateRequest } from './entities/validateRequest.entity';
 
 @Controller('password')
 export class SecurityController {
@@ -13,8 +14,12 @@ export class SecurityController {
   @ApiAcceptedResponse({ description: 'Create an new OTP' })
   @ApiOkResponse({ description: 'Create OTP with success' })
   @ApiBody({ type: OtpRequest })
-  @ApiOkResponse({type: OtpResponse})
   async create(@Body() otp: OTP): Promise<OtpResponse> {
     return await this.securityService.create(otp);
+  }
+
+  @Post('/validate')
+  async validate(@Body() validateObj: ValidateRequest) {
+    return await this.securityService.validate(validateObj);
   }
 }
