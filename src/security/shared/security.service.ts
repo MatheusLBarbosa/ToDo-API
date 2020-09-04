@@ -6,6 +6,7 @@ import { OtpResponse } from '../entities/otpResponse.entity';
 import { exception } from 'console';
 import { ValidateRequest } from '../entities/validateRequest.entity';
 import { ReturnCode } from '../entities/returnCode.enum';
+import { moveMessagePortToContext } from 'worker_threads';
 
 @Injectable()
 export class SecurityService {
@@ -52,6 +53,18 @@ export class SecurityService {
   async validate(validateObj: ValidateRequest): Promise<ReturnCode> {
     try {
       const codInfo = await this.checkCodExistence(validateObj.cod_client);
+      //Data + Hora Chumbada.
+      //Em busca de uma forma para obter exatamente a mesma data do Banco.
+      const date = new Date('09/04/2020 06:10:00 AM');
+
+      //console.log((date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds()));
+
+      if (date.toLocaleTimeString() > codInfo.expiredAt.toLocaleTimeString()) {
+        codInfo.auth_count += 1;
+        this.updateAuthCount(codInfo);
+
+        return ReturnCode.COD_RET_PIN_EXPIRADO;
+      }
 
       if (validateObj.otp_pin !== codInfo.otp_pin && codInfo.auth_count <= 6) {
         if (codInfo.auth_count === 6) return ReturnCode.COD_RET_DISP_BLOQUEADO;
@@ -69,10 +82,20 @@ export class SecurityService {
         return ReturnCode.COD_RET_PENULTIMA_TENTATIVA;
       }
 
+      this.updateValidatedAt(codInfo, date);
       return ReturnCode.COD_RET_OK;
     } catch (err) {
       throw new InternalServerErrorException();
     }
+  }
+
+  private async updateValidatedAt(otpObj: OTP, validateDate: Date) {
+    await getConnection()
+      .createQueryBuilder()
+      .update(OTP)
+      .set({ validateAt: validateDate })
+      .where('id = :id', { id: otpObj.id })
+      .execute();
   }
 
   private async updateAuthCount(otpObj: OTP) {

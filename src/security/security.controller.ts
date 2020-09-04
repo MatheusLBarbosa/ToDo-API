@@ -5,6 +5,7 @@ import { OTP } from './entities/otp.entity';
 import { OtpResponse } from './entities/otpResponse.entity';
 import { OtpRequest } from './entities/otpRequest.entity';
 import { ValidateRequest } from './entities/validateRequest.entity';
+import { ReturnCode } from './entities/returnCode.enum';
 
 @Controller('password')
 export class SecurityController {
@@ -19,7 +20,9 @@ export class SecurityController {
   }
 
   @Post('/validate')
-  async validate(@Body() validateObj: ValidateRequest) {
+  @ApiOkResponse({ description: 'PIN validado com sucesso' })
+  @ApiBody({ type: ValidateRequest })
+  async validate(@Body() validateObj: ValidateRequest): Promise<ReturnCode> {
     return await this.securityService.validate(validateObj);
   }
 }

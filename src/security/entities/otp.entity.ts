@@ -45,7 +45,7 @@ export class OTP {
   @ApiProperty({ type: Date, description: 'Data de expiração do PIN do OTP' })
   expiredAt: Date;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   @ApiProperty({ type: Date, description: 'Data de validação do PIN do OTP' })
   validateAt: Date;
 }
