@@ -52,6 +52,8 @@ $ GRANT ALL PRIVILEGES TO admin;
 ```
 # To consume the API
 http://localhost:3000/tasks
+http://localhost:3000/password/create
+http://localhost:3000/password/validate
 
 # To see the API documentation
 http://localhost:3000/api
