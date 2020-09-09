@@ -1,0 +1,17 @@
+{
+    "Auth_OK": [{
+        "retcod": 0
+    }],
+    "Auth_Invalida": [{
+        "retcod": 74015
+    }],
+    "Penultima_Tentativa": [{
+        "retcod": 74016
+    }],
+    "Disp_Bloqueado": [{
+        "retcod": 74023
+    }],
+    "Pin_Expirado": [{
+        "retcod": 74024
+    }]
+}

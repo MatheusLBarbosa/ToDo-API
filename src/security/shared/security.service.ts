@@ -3,10 +3,9 @@ import { OTP } from '../entities/otp.entity';
 import { getConnection, getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OtpResponse } from '../entities/otpResponse.entity';
-import { exception } from 'console';
 import { ValidateRequest } from '../entities/validateRequest.entity';
 import { ReturnCode } from '../entities/returnCode.enum';
-import { moveMessagePortToContext } from 'worker_threads';
+import * as RetCodJson from '../shared/retcod.json';
 
 @Injectable()
 export class SecurityService {
@@ -50,12 +49,12 @@ export class SecurityService {
     }
   }
 
-  async validate(validateObj: ValidateRequest): Promise<ReturnCode> {
+  async validate(validateObj: ValidateRequest): Promise<any> {
     try {
       const codInfo = await this.checkCodExistence(validateObj.cod_client);
       //Data + Hora Chumbada.
       //Em busca de uma forma para obter exatamente a mesma data do Banco.
-      const date = new Date('09/04/2020 06:10:00 AM');
+      const date = new Date('09/09/2020 01:51:30 AM');
 
       //console.log((date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds()));
 
@@ -63,27 +62,27 @@ export class SecurityService {
         codInfo.auth_count += 1;
         this.updateAuthCount(codInfo);
 
-        return ReturnCode.COD_RET_PIN_EXPIRADO;
+        return RetCodJson.Pin_Expirado;
       }
 
       if (validateObj.otp_pin !== codInfo.otp_pin && codInfo.auth_count <= 6) {
-        if (codInfo.auth_count === 6) return ReturnCode.COD_RET_DISP_BLOQUEADO;
+        if (codInfo.auth_count === 6) return RetCodJson.Disp_Bloqueado;
 
         codInfo.auth_count += 1;
         this.updateAuthCount(codInfo);
 
-        return ReturnCode.COD_RET_PIN_INVALIDO;
+        return RetCodJson.Auth_Invalida;
       }
 
       if (codInfo.auth_count === 5) {
         codInfo.auth_count += 1;
         this.updateAuthCount(codInfo);
 
-        return ReturnCode.COD_RET_PENULTIMA_TENTATIVA;
+        return RetCodJson.Penultima_Tentativa;
       }
 
       this.updateValidatedAt(codInfo, date);
-      return ReturnCode.COD_RET_OK;
+      return RetCodJson.Auth_OK;
     } catch (err) {
       throw new InternalServerErrorException();
     }
@@ -122,5 +121,9 @@ export class SecurityService {
 
   private generatePin(): number {
     return Math.floor(100000 + Math.random() * 900000);
+  }
+
+  private readFile() {
+    const json = require('../shared/retcod.json');
   }
 }

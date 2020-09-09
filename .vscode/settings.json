@@ -1,9 +1,14 @@
 {
     "cSpell.words": [
+        "Bloqueado",
+        "Disp",
+        "Expirado",
         "INVALIDA",
+        "Penultima",
         "Repos",
         "SYSDATE",
         "SYSTIMESTAMP",
+        "Tentativa",
         "nestjs",
         "ruim",
         "typeorm"
