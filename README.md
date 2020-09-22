@@ -7,7 +7,7 @@
 
 ## Description
 
-Simple CRUD with this powerfull typescript framework, [NEST](https://docs.nestjs.com/).
+Simple CRUD, and an OTP (One Time Password) with this powerfull typescript framework, [NEST](https://docs.nestjs.com/).
 
 ## Installation
 
